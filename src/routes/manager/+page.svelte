@@ -40,7 +40,7 @@
 				<img src="/favicon.png" alt="Cloudflare Images Manager" class="w-20" />
 			</div>
 			<div>
-				<h1 class="text-2xl">Cloudflare Image Manager</h1>
+				<h1 class="text-2xl font-medium">Cloudflare Image Manager</h1>
 				<p>
 					<span class="pr-10">
 						{data.base_url}
