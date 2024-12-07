@@ -92,17 +92,19 @@
 						e.preventDefault();
 						toggleSelection(image.id);
 					}}
-					class="bloc k h-max rounded border-2 py-2"
+					class="bloc k h-max overflow-hidden rounded border-2 pt-2"
 					tabindex="0"
 					class:selected={selection.get(image.id)}
 				>
-					<div class="index min-h-[4.5rem] text-wrap break-words px-2">
+					<div class="index h-32 text-wrap break-words px-2 leading-tight">
 						{image.id}
+						<br />
+						<br />
+						<span class="text-wrap break-words text-sm leading-tight">
+							{image.filename}
+						</span>
 					</div>
-					<img src={data.base_url + image.id + '/public'} alt="" class="py-4" />
-					<div class="text-wrap break-words px-2 text-sm">
-						{image.filename}
-					</div>
+					<img src={data.base_url + image.id + '/w=181'} alt="" class="pt-4" />
 				</button>
 			{/each}
 		</div>
