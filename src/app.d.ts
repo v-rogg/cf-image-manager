@@ -4,8 +4,8 @@ declare global {
 	namespace App {
 		// interface Error {}
 		interface Locals {
-			CF_ACCOUNT_ID: string;
-			CF_API_KEY: string;
+			CF_ACCOUNT_ID: string | null;
+			CF_API_KEY: string | null;
 		}
 		// interface PageData {}
 		// interface PageState {}

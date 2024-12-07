@@ -6,7 +6,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 };
 
 export const actions = {
-	default: async ({ request, cookies }) => {
+	open: async ({ request, cookies }) => {
 		const formData = await request.formData();
 		const token = formData.get('token');
 		const account = formData.get('account');
@@ -30,6 +30,12 @@ export const actions = {
 				maxAge: 60 * 60 * 24 * 30 // 30 days
 			});
 		}
+
+		return { success: true };
+	},
+	exit: async ({ cookies }) => {
+		cookies.delete('cf_api_key', { path: '/' });
+		cookies.delete('cf_account', { path: '/' });
 
 		return { success: true };
 	}

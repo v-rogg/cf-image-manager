@@ -45,22 +45,18 @@ export const load: PageServerLoad = async ({ locals }) => {
 		account_hash = images[0].variants[0].split('https://imagedelivery.net/')[1].split('/')[0];
 	}
 
-	console.log('load page', images.length);
-
 	return { base_url: `https://imagedelivery.net/${account_hash}/`, images, stats };
 };
 
 export const actions = {
-	default: async ({ request, locals }) => {
+	delete: async ({ request, locals }) => {
 		const formData = await request.formData();
 		const selection: string[] = JSON.parse(formData.get('selection')?.toString() || '[]');
 
-		console.log(selection);
-
-		if (selection.length <= 0) return fail(400);
+		if (selection.length <= 0 || !locals.CF_ACCOUNT_ID || !locals.CF_API_KEY) return fail(400);
 
 		const promises = selection.map(async (e) => {
-			await deleteImage(locals.CF_ACCOUNT_ID, locals.CF_API_KEY, e);
+			await deleteImage(<string>locals.CF_ACCOUNT_ID, <string>locals.CF_API_KEY, e);
 		});
 		await Promise.all(promises);
 

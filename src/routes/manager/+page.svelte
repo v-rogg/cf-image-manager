@@ -3,6 +3,9 @@
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
 	import { onMount } from 'svelte';
+	import toast, { Toaster } from 'svelte-hot-french-toast';
+	import Exit from '$lib/Exit.svelte';
+	import Footer from '$lib/Footer.svelte';
 
 	let { data }: { data: PageData } = $props();
 	let images = $state(data.images);
@@ -28,19 +31,30 @@
 	</div>
 {/if}
 
+<Toaster />
+
 <main class="container mx-auto pt-8">
 	<header class="mb-4 mt-8 flex items-center justify-between border-b-2">
-		<h1 class="text-2xl">Cloudflare Image Manager</h1>
-		<p>
-			<span class="pr-10">
-				{data.base_url}
-			</span>
-			<span>
-				<b>{data.stats.current.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</b> of {data.stats.allowed
-					.toString()
-					.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-			</span>
-		</p>
+		<div class="flex items-center gap-4">
+			<div>
+				<img src="/favicon.png" alt="Cloudflare Images Manager" class="w-20" />
+			</div>
+			<div>
+				<h1 class="text-2xl">Cloudflare Image Manager</h1>
+				<p>
+					<span class="pr-10">
+						{data.base_url}
+					</span>
+					<span>
+						<span class="font-semibold"
+							>{data.stats.current.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</span
+						>
+						of {data.stats.allowed.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+					</span>
+				</p>
+			</div>
+		</div>
+		<Exit />
 	</header>
 
 	<form
@@ -72,52 +86,90 @@
 	>
 		<div class="mb-6 flex items-center justify-between">
 			<div class="text-lg">
-				<b>{selection_size}</b> Selected
+				<span class="font-semibold">{selection_size}</span> Selected<span class="ml-2 text-sm"
+					>(Select using Ctrl + Click)</span
+				>
 			</div>
 			<div>
 				<button
-					class="rounded-lg bg-red-600 px-3 py-1 text-white disabled:bg-gray-300"
+					class="rounded-lg bg-red-600 px-4 py-2 text-white hover:bg-red-700 active:bg-red-900 disabled:bg-gray-300"
 					disabled={selection_size <= 0}
 					tabindex="0"
-					type="submit">Delete</button
+					type="submit"
+					formaction="?/delete"
+					>Delete<i class="fa-sharp fa-regular fa-trash-xmark ml-2"></i></button
 				>
 			</div>
 		</div>
 
 		<div class="grid grid-cols-8 gap-2">
-			{#each images as image, i}
+			{#each images as image}
 				<button
-					id={i + image.id}
+					id={image.id}
 					onclick={(e) => {
 						e.preventDefault();
-						toggleSelection(image.id);
+						if (e.metaKey || e.ctrlKey) {
+							toggleSelection(image.id);
+						} else {
+							navigator.clipboard.writeText(data.base_url + image.id);
+							toast.success('Copied to clipboard', { position: 'bottom-end' });
+						}
 					}}
-					class="bloc k h-max overflow-hidden rounded border-2 pt-2"
+					class="bloc k h-max overflow-hidden rounded border pt-2 shadow-lg transition"
 					tabindex="0"
+					title={image.id}
 					class:selected={selection.get(image.id)}
+					class:not-selected={selection_size > 0 && !selection.get(image.id)}
 				>
-					<div class="index h-32 text-wrap break-words px-2 leading-tight">
-						{image.id}
-						<br />
-						<br />
-						<span class="text-wrap break-words text-sm leading-tight">
-							{image.filename}
-						</span>
+					<div class="index h-16 text-wrap break-words border-b px-2 text-sm leading-tight">
+						{image.filename}
 					</div>
-					<img src={data.base_url + image.id + '/w=181'} alt="" class="pt-4" />
+					<div class="bg-white">
+						<div class="pattern-checks">
+							<img src={data.base_url + image.id + '/w=200'} alt="" class="" />
+						</div>
+					</div>
 				</button>
 			{/each}
 		</div>
 	</form>
+	<Footer />
 </main>
 
 <style lang="postcss">
 	.selected {
-		@apply bg-red-600;
-		@apply border-red-950;
-		@apply text-white;
+		@apply border-current;
+		@apply text-blue-500;
+		@apply font-medium;
+		@apply shadow-xl;
+	}
 
-		> .index {
-		}
+	.not-selected {
+		@apply opacity-50;
+		@apply blur-xs;
+	}
+
+	.pattern-checks {
+		@apply text-gray-200;
+		background-image: repeating-linear-gradient(
+				45deg,
+				currentColor 25%,
+				transparent 25%,
+				transparent 75%,
+				currentColor 75%,
+				currentColor
+			),
+			repeating-linear-gradient(
+				45deg,
+				currentColor 25%,
+				transparent 25%,
+				transparent 75%,
+				currentColor 75%,
+				currentColor
+			);
+		background-position:
+			0 0,
+			10px 10px;
+		background-size: calc(2 * 10px) calc(2 * 10px);
 	}
 </style>
