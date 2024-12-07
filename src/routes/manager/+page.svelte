@@ -10,9 +10,13 @@
 	let { data }: { data: PageData } = $props();
 	let images = $state(data.images);
 	let selection = $state(new Map());
+	let locales: string[] = $state([]);
+	let date_locale = $state('en');
 
 	onMount(() => {
 		selection = new Map(images.map((image) => [image.id, false]));
+		locales = Array.from(navigator?.languages || ['en']);
+		date_locale = locales.find((l) => /^de-de$/i.test(l)) ? 'de' : locales[0];
 	});
 
 	let selection_size = $derived([...selection.values()].filter(Boolean).length);
@@ -23,9 +27,6 @@
 	}
 
 	let in_progress = $state(false);
-
-	const locales = navigator?.languages || 'en';
-	const date_locale = locales.find((l) => /^de-de$/i.test(l)) ? 'de' : locales[0];
 </script>
 
 {#if in_progress}
