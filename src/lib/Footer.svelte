@@ -6,7 +6,7 @@
 		>
 
 		<a href="https://github.com/v-rogg/cf-image-manager/blob/main/LICENSE"
-			>MIT <i class="fa-sharp fa-solid fa-section"></i></a
+			>MIT <i class="fa-sharp fa-solid fa-copyright"></i></a
 		>
 	</div>
 </footer>
