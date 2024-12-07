@@ -23,6 +23,9 @@
 	}
 
 	let in_progress = $state(false);
+
+	const locales = navigator?.languages || 'en';
+	const date_locale = locales.find((l) => /^de-de$/i.test(l)) ? 'de' : locales[0];
 </script>
 
 {#if in_progress}
@@ -104,6 +107,7 @@
 
 		<div class="grid grid-cols-8 gap-2">
 			{#each images as image}
+				{@const date = new Date(image.uploaded)}
 				<button
 					id={image.id}
 					onclick={(e) => {
@@ -121,8 +125,14 @@
 					class:selected={selection.get(image.id)}
 					class:not-selected={selection_size > 0 && !selection.get(image.id)}
 				>
-					<div class="index h-16 text-wrap break-words border-b px-2 text-sm leading-tight">
-						{image.filename}
+					<div class="index text-wrap break-words border-b px-2 pb-2 text-sm leading-tight">
+						<div class="h-5 overflow-hidden text-ellipsis text-nowrap">
+							{image.filename}
+						</div>
+						<div class="mt-1 text-xs">
+							{date.toLocaleDateString(date_locale)}
+							{date.toLocaleTimeString(date_locale)}
+						</div>
 					</div>
 					<div class="bg-white">
 						<div class="pattern-checks">

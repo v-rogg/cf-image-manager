@@ -9,7 +9,10 @@ async function getImages(account: string, key: string) {
 		}
 	})
 		.then((res) => res.json())
-		.then((res) => <[{ id: string; filename: string; variants: string[] }]>res.result.images);
+		.then(
+			(res) =>
+				<[{ id: string; filename: string; variants: string[]; uploaded: string }]>res.result.images
+		);
 }
 
 async function getStats(account: string, key: string) {
