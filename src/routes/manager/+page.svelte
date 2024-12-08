@@ -81,6 +81,9 @@
 			}
 		}
 	}}
+	ondragover={(e) => {
+		e.preventDefault();
+	}}
 />
 
 <main class="container mx-auto pt-8">
