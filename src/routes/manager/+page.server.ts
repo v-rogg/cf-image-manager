@@ -37,6 +37,16 @@ async function deleteImage(account: string, key: string, image_id: string) {
 	).then((res) => res.json());
 }
 
+async function uploadImage(account: string, key: string, form: FormData) {
+	return await fetch(`https://api.cloudflare.com/client/v4/accounts/${account}/images/v1	`, {
+		method: 'POST',
+		headers: {
+			Authorization: `Bearer ${key}`
+		},
+		body: form
+	});
+}
+
 export const load: PageServerLoad = async ({ locals }) => {
 	if (!locals.CF_API_KEY || !locals.CF_ACCOUNT_ID) redirect(307, '/');
 
@@ -64,5 +74,17 @@ export const actions = {
 		await Promise.all(promises);
 
 		return { success: true, images: await getImages(locals.CF_ACCOUNT_ID, locals.CF_API_KEY) };
+	},
+	upload: async ({ request, locals }) => {
+		const formData = await request.formData();
+
+		if (!locals.CF_ACCOUNT_ID || !locals.CF_API_KEY) return fail(400);
+
+		await uploadImage(locals.CF_ACCOUNT_ID, locals.CF_API_KEY, formData);
+
+		return {
+			success: true,
+			images: JSON.stringify(await getImages(locals.CF_ACCOUNT_ID, locals.CF_API_KEY))
+		};
 	}
 } satisfies Actions;

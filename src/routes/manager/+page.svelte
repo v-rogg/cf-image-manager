@@ -26,16 +26,62 @@
 		selection = new Map(selection);
 	}
 
-	let in_progress = $state(false);
+	let in_progress = $state('');
+
+	async function processFile(file: File) {
+		const reader = new FileReader();
+
+		reader.readAsDataURL(file);
+
+		reader.onload = async (e) => {
+			const dataUrl = e.target?.result; // The Data URL
+
+			if (typeof dataUrl == 'string') {
+				const formData = new FormData();
+				formData.append('file', file);
+
+				in_progress = 'Uploading image';
+				const response = await fetch('?/upload', {
+					method: 'POST',
+					body: formData
+				}).then((res) => res.json());
+				if (response.status == 200) {
+					const data = JSON.parse(response.data);
+					images = JSON.parse(data[2]);
+					selection = new Map(images.map((image) => [image.id, false]));
+					await invalidateAll();
+				}
+				in_progress = '';
+			}
+		};
+	}
 </script>
 
-{#if in_progress}
-	<div class="fixed inset-0 z-10 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-		<div class="rounded-lg bg-white p-8 text-black">Working for you</div>
+{#if in_progress !== ''}
+	<div
+		class="pointer-events-none fixed inset-0 z-10 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+	>
+		<div class="rounded-lg bg-white p-8 text-black">{in_progress}</div>
 	</div>
 {/if}
 
 <Toaster />
+
+<svelte:window
+	ondrop={async (e) => {
+		e.preventDefault();
+		const files = e.dataTransfer?.files;
+
+		if (files && files.length > 0) {
+			const file = files[0]; // Assume single file drop
+			if (file.type.startsWith('image/')) {
+				processFile(file);
+			} else {
+				alert('Please drop an image file.');
+			}
+		}
+	}}
+/>
 
 <main class="container mx-auto pt-8">
 	<header class="mb-4 mt-8 flex items-center justify-between border-b-2">
@@ -66,7 +112,7 @@
 		use:enhance={({ formData }) => {
 			const res = confirm(`Are you sure you want to delete the ${selection_size} selected images?`);
 			if (!res) return;
-			in_progress = true;
+			in_progress = 'Deleting images';
 
 			formData.set(
 				'selection',
@@ -83,7 +129,7 @@
 					images = result.data?.images;
 					selection = new Map(images.map((image) => [image.id, false]));
 				}
-				in_progress = false;
+				in_progress = '';
 				await invalidateAll();
 			};
 		}}
@@ -117,7 +163,7 @@
 							toggleSelection(image.id);
 						} else {
 							navigator.clipboard.writeText(data.base_url + image.id);
-							toast.success('Copied to clipboard', { position: 'bottom-end' });
+							toast.success('Copied to clipboard', { position: 'top-center' });
 						}
 					}}
 					class="bloc k h-max overflow-hidden rounded border pt-2 shadow-lg transition"
