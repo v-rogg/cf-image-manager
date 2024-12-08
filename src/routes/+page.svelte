@@ -7,12 +7,12 @@
 </script>
 
 <div class="w-100 flex h-[100dvh] items-center justify-center">
-	<div
-		class="rounded-lg border border-cloudflare bg-gradient-to-r from-cloudflare to-cloudflare-light pt-6 drop-shadow-xl"
-	>
+	<div class="rounded-lg border border-gray-300 bg-gray-100 pt-6 drop-shadow-xl">
 		<div class="ml-8 items-center gap-2 pb-4">
-			<img src="/icon_white.png" alt="Cloudflare Images Manager" class="mb-3 w-12" />
-			<h1 class="text-2xl font-medium">Cloudflare Image Manager</h1>
+			<img src="/favicon.png" alt="Cloudflare Images Manager" class="mb-3 w-12" />
+			<h1 class="text-2xl font-medium">
+				Cloudflare Images<i class="fa-sharp fa-regular fa-trademark -translate-y-2 text-xs"></i> Manager
+			</h1>
 		</div>
 		<form
 			method="POST"

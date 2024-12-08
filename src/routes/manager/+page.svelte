@@ -93,7 +93,9 @@
 				<img src="/favicon.png" alt="Cloudflare Images Manager" class="w-20" />
 			</div>
 			<div>
-				<h1 class="text-2xl font-medium">Cloudflare Image Manager</h1>
+				<h1 class="text-2xl font-medium">
+					Cloudflare Images<i class="fa-sharp fa-regular fa-trademark -translate-y-2 text-xs"></i> Manager
+				</h1>
 				<p>
 					<span class="pr-10">
 						{data.base_url}
